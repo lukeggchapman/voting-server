@@ -32,7 +32,8 @@ describe('application logic', () => {
       const nextState = next(state);
       expect(nextState).to.equal(Map({
         vote: Map({
-          pair: List.of('Trainspotting', '28 Days Later')
+          pair: List.of('Trainspotting', '28 Days Later'),
+          round: 1
         }),
         entries: List.of('Sunshine')
       }));
@@ -45,14 +46,16 @@ describe('application logic', () => {
           tally: Map({
             'Trainspotting': 4,
             '28 Days Later': 2
-          })
+          }),
+          round: 1
         }),
         entries: List.of('Sunshine', 'Millions', '127 Hours')
       });
       const nextState = next(state);
       expect(nextState).to.equal(Map({
         vote: Map({
-          pair: List.of('Sunshine', 'Millions')
+          pair: List.of('Sunshine', 'Millions'),
+          round: 2
         }),
         entries: List.of('127 Hours', 'Trainspotting')
       }));
@@ -65,14 +68,16 @@ describe('application logic', () => {
           tally: Map({
             'Trainspotting': 3,
             '28 Days Later': 3
-          })
+          }),
+          round: 1
         }),
         entries: List.of('Sunshine', 'Millions', '127 Hours')
       });
       const nextState = next(state);
       expect(nextState).to.equal(Map({
         vote: Map({
-          pair: List.of('Sunshine', 'Millions')
+          pair: List.of('Sunshine', 'Millions'),
+          round: 2
         }),
         entries: List.of('127 Hours', 'Trainspotting', '28 Days Later')
       }));
@@ -85,7 +90,8 @@ describe('application logic', () => {
           tally: Map({
             'Trainspotting': 4,
             '28 Days Later': 2
-          })
+          }),
+          round: 1
         }),
         entries: List()
       });
