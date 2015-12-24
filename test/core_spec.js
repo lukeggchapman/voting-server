@@ -1,4 +1,4 @@
-import {List, Map} from 'immutable';
+import {List, Map, fromJS} from 'immutable';
 import {expect} from 'chai';
 
 import {setEntries, next, vote} from '../src/core';
@@ -125,6 +125,16 @@ describe('application logic', () => {
           'Trainspotting': 4,
           '28 Days Later': 2
         })
+      }));
+    });
+
+    it('prevents invalid vote', () => {
+      const state = fromJS({
+        pair: ['Trainspotting', '28 Days Later']
+      });
+      const nextState = vote(state, 'Sunshine');
+      expect(nextState).to.equal(fromJS({
+        pair: ['Trainspotting', '28 Days Later']
       }));
     });
   });
