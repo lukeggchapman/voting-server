@@ -2,11 +2,13 @@ import {List, Map} from 'immutable';
 
 export const INITIAL_STATE = Map();
 
-export function setEntries (state, entries) {
-  return state.set('entries', List(entries));
+export function setEntries(state, entries) {
+  const list = List(entries);
+  return state.set('entries', list)
+              .set('initialEntries', list);
 }
 
-function getWinners (vote) {
+function getWinners(vote) {
   if (!vote) {
     return [];
   }
@@ -22,7 +24,7 @@ function getWinners (vote) {
   }
 }
 
-export function next (state) {
+export function next(state, round = state.getIn(['vote', 'round'], 0)) {
   const entries = state.get('entries')
                        .concat(getWinners(state.get('vote')));
 
@@ -34,14 +36,24 @@ export function next (state) {
     return state.merge({
       vote: Map({
         pair: entries.take(2),
-        round: state.getIn(['vote', 'round'], 0) + 1
+        round: round + 1
       }),
       entries: entries.skip(2)
     });
   }
 }
 
-function removePreviousVote (voteState, voter) {
+export function restart(state) {
+  const round = state.getIn(['vote', 'round'], 0);
+  return next(
+    state.set('entries', state.get('initialEntries'))
+      .remove('vote')
+      .remove('winner'),
+    round
+  );
+}
+
+function removePreviousVote(voteState, voter) {
   const previousVote = voteState.getIn(['votes', voter]);
   if (previousVote) {
     return voteState.updateIn(['tally', previousVote], t => t - 1)
@@ -50,7 +62,7 @@ function removePreviousVote (voteState, voter) {
   return voteState;
 }
 
-function addVote (voteState, entry, voter) {
+function addVote(voteState, entry, voter) {
   if (voteState.get('pair').includes(entry)) {
     return voteState.updateIn(
       ['tally', entry],
@@ -61,7 +73,7 @@ function addVote (voteState, entry, voter) {
   return voteState;
 }
 
-export function vote (voteState, entry, voter) {
+export function vote(voteState, entry, voter) {
   return addVote(
     removePreviousVote(voteState, voter),
     entry,
